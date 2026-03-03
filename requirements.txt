@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+torch
+transformers
+faster-whisper
+librosa
+pydub
+pyannote.audio
+spacy
+scikit-learn
+sounddevice
+matplotlib
+noisereduce
+speechbrain
+deepmultilingualpunctuation
+python-multipart
