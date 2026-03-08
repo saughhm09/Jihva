@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jihvā - Retro Steampunk NLP</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="steam-overlay"></div>
+    
+    <header class="brass-box main-header">
+        <h1>Jihv&amacr;</h1>
+        <p class="subtitle">Multi-Speaker Intelligence Engine</p>
+        <div class="gear gear-left">⚙</div>
+        <div class="gear gear-right">⚙</div>
+    </header>
+
+    <main class="dashboard">
+        <!-- Control Panel -->
+        <section class="brass-box panel control-panel">
+            <h2 class="panel-title">Steam Console Control</h2>
+            <div class="controls-grid">
+                
+                <div class="control-group">
+                    <label>Action:</label>
+                    <button id="btn-record" class="pixel-btn rec-btn">● REC</button>
+                    <span id="recording-indicator" class="hidden blinking">Recording. . .</span>
+                    
+                    <label class="custom-file-upload pixel-btn">
+                        <input type="file" id="file-upload" accept="audio/*">
+                        ↑ Upload .WAV
+                    </label>
+                </div>
+                
+                <div class="control-group">
+                    <label for="speaker-select">Speaker Dial (2-5):</label>
+                    <input type="range" id="speaker-select" min="2" max="5" value="2" class="brass-slider">
+                    <span id="speaker-val" class="val-display">2</span>
+                </div>
+                
+                <div class="control-group toggles">
+                    <label class="toggle-label"><input type="checkbox" id="toggle-filter" checked> Filter Fillers</label>
+                    <label class="toggle-label"><input type="checkbox" id="toggle-noise" checked> Noise Reduc</label>
+                    <label class="toggle-label"><input type="checkbox" id="toggle-silence"> Silence Rem</label>
+                </div>
+                
+                <button id="process-btn" class="pixel-btn process-btn" disabled>ENGAGE ENGINE ⚡</button>
+                <div id="loader" class="hidden">
+                    <div class="steam-loader"></div>
+                    <p>Processing text via clockwork mechanisms...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transcript Terminal -->
+        <section class="brass-box panel terminal-panel">
+            <h2 class="panel-title">Transcript Terminal</h2>
+            <div id="transcript-output" class="terminal-screen">
+                <span class="cursor">_</span>
+                <p>Awaiting audio input...</p>
+            </div>
+        </section>
+
+        <!-- Two Column Layout for Analytics -->
+        <div class="twocol">
+            <!-- Sentiment Gauge -->
+            <section class="brass-box panel gauge-panel">
+                <h2 class="panel-title">Sentiment Pressure</h2>
+                <div id="sentiment-output" class="gauge-container">
+                    <p class="placeholder-text">Insert data to build pressure.</p>
+                </div>
+            </section>
+            
+            <!-- Accent Meter -->
+            <section class="brass-box panel accent-panel">
+                <h2 class="panel-title">Accent Detection Meter</h2>
+                <div id="accent-output" class="gauge-container center-text">
+                    <p class="placeholder-text">Scanning regional dialects.</p>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Keyword Analyzer Panel -->
+        <section class="brass-box panel keyword-panel">
+            <h2 class="panel-title">Keyword Analyzer</h2>
+            <div id="keyword-output" class="keyword-cloud">
+               <p class="placeholder-text">Awaiting frequency extraction.</p>
+            </div>
+        </section>
+
+        <!-- Summary Chamber -->
+        <section class="brass-box panel summary-panel">
+            <h2 class="panel-title">Steam Condenser Summary</h2>
+            <div class="summary-controls">
+                <select id="summary-mode" class="pixel-select">
+                    <option value="Detailed">Detailed Extraction</option>
+                    <option value="Short">Executive Output</option>
+                    <option value="Bullet">Bullet Protocol</option>
+                </select>
+            </div>
+            <div id="summary-output" class="parchment-screen">
+                <p class="placeholder-text">Ready to condense meaning.</p>
+            </div>
+        </section>
+        
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
