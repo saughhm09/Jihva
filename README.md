@@ -25,6 +25,17 @@ cd Backend
 Install System Dependencies:
 Ensure you have **FFmpeg** installed on your system and added to your PATH, as it is required for audio extraction.
 
+Create a Virtual Environment:
+```bash
+# On Windows
+python -m venv venv
+venv\Scripts\activate
+
+# On Mac/Linux
+python3 -m venv venv
+source venv/bin/activate
+```
+
 Install Python Dependencies:
 ```bash
 pip install fastapi uvicorn python-multipart pydub faster-whisper deepmultilingualpunctuation transformers torch pyannote.audio spacy numpy librosa noisereduce soundfile scikit-learn requests
