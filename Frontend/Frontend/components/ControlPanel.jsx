@@ -14,28 +14,8 @@ const ControlPanel = ({ onProcess, loading, loadingMessage }) => {
     const audioChunksRef = useRef([])
 
     useEffect(() => {
-        // Init microphone if possible
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    const mediaRecorder = new MediaRecorder(stream)
-                    mediaRecorderRef.current = mediaRecorder
-
-                    mediaRecorder.ondataavailable = e => {
-                        audioChunksRef.current.push(e.data)
-                    }
-
-                    mediaRecorder.onstop = () => {
-                        const blob = new Blob(audioChunksRef.current, { type: 'audio/wav' })
-                        setAudioBlob(blob)
-                        audioChunksRef.current = [] // reset
-                        setUploadedFile(null) // clear file if recording
-                    }
-                })
-                .catch(err => {
-                    console.error('Microphone access denied:', err)
-                })
-        }
+        // We will initialize the microphone on-demand instead of on load,
+        // to prevent the browser from blocking the permission prompt!
     }, [])
 
     const handleFileUpload = (e) => {
@@ -45,16 +25,48 @@ const ControlPanel = ({ onProcess, loading, loadingMessage }) => {
         }
     }
 
+    const startRecordingFlow = (mediaRecorder) => {
+        audioChunksRef.current = []
+        mediaRecorder.start()
+        setIsRecording(true)
+    }
+
     const toggleRecording = () => {
         if (!mediaRecorderRef.current) {
-            alert("Microphone not initialized. Please ensure access is allowed.")
+            // Initialize on demand
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        const mediaRecorder = new MediaRecorder(stream)
+                        mediaRecorderRef.current = mediaRecorder
+
+                        mediaRecorder.ondataavailable = e => {
+                            if (e.data && e.data.size > 0) {
+                                audioChunksRef.current.push(e.data)
+                            }
+                        }
+
+                        mediaRecorder.onstop = () => {
+                            const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+                            setAudioBlob(blob)
+                            audioChunksRef.current = [] // reset
+                            setUploadedFile(null) // clear file if recording
+                        }
+                        
+                        startRecordingFlow(mediaRecorder)
+                    })
+                    .catch(err => {
+                        console.error('Microphone access denied:', err)
+                        alert("Microphone access denied or not available.")
+                    })
+            } else {
+                alert("Your browser does not support audio recording.")
+            }
             return
         }
 
         if (!isRecording) {
-            audioChunksRef.current = []
-            mediaRecorderRef.current.start()
-            setIsRecording(true)
+            startRecordingFlow(mediaRecorderRef.current)
         } else {
             mediaRecorderRef.current.stop()
             setIsRecording(false)
@@ -66,7 +78,8 @@ const ControlPanel = ({ onProcess, loading, loadingMessage }) => {
         if (uploadedFile) {
             finalFile = uploadedFile
         } else if (audioBlob) {
-            finalFile = new File([audioBlob], "recording.wav", { type: "audio/wav" })
+            // Browsers record in webm or similar, sending as webm allows backend ffmpeg to decode it
+            finalFile = new File([audioBlob], "recording.webm", { type: "audio/webm" })
         } else {
             alert("No audio data found.")
             return
