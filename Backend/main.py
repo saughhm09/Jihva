@@ -121,7 +121,8 @@ async def api_process_audio(
         if os.path.exists(temp_path):
             try: os.remove(temp_path)
             except: pass
-        processed_file = temp_path.replace(".wav", "_processed.wav").replace(".mp3", "_processed.wav")
+        base_handle, _ = os.path.splitext(temp_path)
+        processed_file = f"{base_handle}_processed.wav"
         if os.path.exists(processed_file):
             try: os.remove(processed_file)
             except: pass

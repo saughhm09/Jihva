@@ -3,7 +3,6 @@ import numpy as np # type: ignore
 import librosa # type: ignore
 import noisereduce as nr # type: ignore
 import soundfile as sf # type: ignore
-from pydub import AudioSegment # type: ignore
 
 
 def normalize_audio(audio_data):
@@ -70,7 +69,8 @@ def process_audio_file(file_path, apply_noise_reduction=True, apply_silence_remo
     y = normalize_audio(y)
     
     # Save the processed audio temporarily
-    output_path = file_path.replace(".wav", "_processed.wav").replace(".mp3", "_processed.wav")
+    base_handle, _ = os.path.splitext(file_path)
+    output_path = f"{base_handle}_processed.wav"
     sf.write(output_path, y, sr)
     
     return output_path

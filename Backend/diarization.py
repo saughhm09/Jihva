@@ -1,19 +1,27 @@
 import os
+import warnings
 from typing import Dict, Any
+
+# Suppress the Pyannote torchcodec warnings about FFmpeg
+warnings.filterwarnings("ignore", category=UserWarning, message=".*torchcodec is not installed correctly.*")
+
 from pyannote.audio import Pipeline # type: ignore
 
-# Load pipeline. Requires HF_TOKEN in environment variables
-# Before running this, ensure you have accepted the user conditions on huggingface pyannote pages
-hf_token = os.environ.get("HF_TOKEN", None)
-try:
-    diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=hf_token)
-except Exception as e:
-    # try older/newer versions which might use use_auth_token or simply token
+hf_token = os.environ.get("HF_TOKEN")
+
+if not hf_token:
+    print("HF_TOKEN not found in environment. Speaker diarization will be skipped.")
+    diarization_pipeline = None
+else:
     try:
-        diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", token=hf_token)
-    except Exception as e2:
-        print(f"Failed to load speaker diarization from pyannote: {e} | {e2}")
-        diarization_pipeline = None
+        diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=hf_token)
+    except Exception as e:
+        # try older/newer versions which might use use_auth_token or simply token
+        try:
+            diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", token=hf_token)
+        except Exception as e2:
+            print(f"Failed to load speaker diarization from pyannote. Check your HF_TOKEN. Skipping diarization.")
+            diarization_pipeline = None
 
 
 def diarize_audio(audio_path, num_speakers=None):
