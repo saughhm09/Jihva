@@ -29,18 +29,26 @@ def _init_models():
 
     if punct_model is None:
         try:
+            # Patch for newer transformers versions that dropped grouped_entities
+            import transformers
+            original_sanitize = getattr(transformers.TokenClassificationPipeline, '_sanitize_parameters', None)
+            if original_sanitize:
+                def _patched_sanitize(self, **kwargs):
+                    kwargs.pop('grouped_entities', None)
+                    return original_sanitize(self, **kwargs)
+                transformers.TokenClassificationPipeline._sanitize_parameters = _patched_sanitize
             punct_model = PunctuationModel()
         except Exception as e:
-            print(f"Punctuation model failed to load. Will skip punctuation restoration if so. Error: {e}")
-            punct_model = False # Set to false to avoid retrying
+            print(f"Punctuation model failed to load. Will skip punctuation restoration. Error: {e}")
+            punct_model = False  # Set to False to avoid retrying
 
 
-def transcribe_audio(audio_path, remove_fillers=False):
+def transcribe_audio(audio_path, remove_fillers=False, language="en"):
     """Transcribes audio, returning timestamps and word-level details."""
     _init_models()
     assert whisper_model is not None
 
-    segments, info = whisper_model.transcribe(audio_path, word_timestamps=True)
+    segments, info = whisper_model.transcribe(audio_path, word_timestamps=True, language=language)
     
     language = info.language
     overall_confidence = info.language_probability

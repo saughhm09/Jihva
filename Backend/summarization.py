@@ -111,8 +111,8 @@ def generate_summary(text, mode="Detailed"):
     # Post-processing based on mode
     if mode == "Bullet":
         # Convert sentences to bullet points heuristically
-        sentences = [s.strip() for s in merged_summary.split(". ") if s.strip()]
-        bullet_points = [f"• {s}." if not s.endswith(".") else f"• {s}" for s in sentences]
+        sentences = [sentence.strip() for sentence in merged_summary.split(". ") if sentence.strip()]
+        bullet_points = [f"• {sentence}." if not sentence.endswith(".") else f"• {sentence}" for sentence in sentences]
         return "\n".join(bullet_points)
         
     return merged_summary

@@ -4,6 +4,7 @@ torch
 transformers
 faster-whisper
 librosa
+soundfile
 pydub
 pyannote.audio
 spacy
@@ -14,3 +15,4 @@ noisereduce
 speechbrain
 deepmultilingualpunctuation
 python-multipart
+python-dotenv

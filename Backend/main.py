@@ -1,4 +1,12 @@
 import os
+
+# Load .env file if present (for HF_TOKEN etc.)
+try:
+    from dotenv import load_dotenv  # type: ignore
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, skip
+
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException # type: ignore
 from fastapi.responses import JSONResponse # type: ignore
 from fastapi.staticfiles import StaticFiles # type: ignore
@@ -29,10 +37,31 @@ app.add_middleware(
 TEMP_DIR = "temp_audio"
 os.makedirs(TEMP_DIR, exist_ok=True)
 
+
+@app.on_event("startup")
+async def warmup_models():
+    """Pre-load all models at startup so the first request isn't slow."""
+    import asyncio
+    import concurrent.futures
+
+    def _load():
+        print("Warming up models...")
+        from transcription import _init_models as init_transcription
+        from sentiment import _init_model as init_sentiment
+        from summarization import _init_model as init_summarization
+        init_transcription()
+        init_sentiment()
+        init_summarization()
+        print("All models loaded and ready.")
+
+    loop = asyncio.get_event_loop()
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        await loop.run_in_executor(pool, _load)
+
 @app.post("/api/process-audio")
 async def api_process_audio(
     file: UploadFile = File(None),
-    num_speakers: int = Form(int),
+    num_speakers: int = Form(2),
     remove_fillers: bool = Form(False),
     noise_reduction: bool = Form(True),
     silence_removal: bool = Form(False),
@@ -60,7 +89,7 @@ async def api_process_audio(
         features = extract_features(processed_path)
         
         # 3. Transcription
-        transcription_result = transcribe_audio(processed_path, remove_fillers=remove_fillers)
+        transcription_result = transcribe_audio(processed_path, remove_fillers=remove_fillers, language="en")
         whisper_segments = transcription_result["segments"]
         language_info = {
             "language": transcription_result["language"],
