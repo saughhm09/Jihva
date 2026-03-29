@@ -87,7 +87,7 @@ const ControlPanel = ({ onProcess, loading, loadingMessage }) => {
 
         const formData = new FormData()
         formData.append("file", finalFile)
-        formData.append("num_speakers", speakerCount)
+        formData.append("num_speakers", parseInt(speakerCount, 10))
         formData.append("remove_fillers", toggleFilter)
         formData.append("noise_reduction", toggleNoise)
         formData.append("silence_removal", toggleSilence)

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import './App.css'
 import Analytics from '../components/Analytics'
 import ControlPanel from '../components/ControlPanel'
 import HeaderSection from '../components/HeaderSection'
@@ -22,7 +21,7 @@ function App() {
     setLoadingMessage('Analyzing audio frequencies... Stand by...')
     
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/process-audio', {
+      const response = await fetch('/api/process-audio', {
         method: 'POST',
         body: formData
       })

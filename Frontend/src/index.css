@@ -367,3 +367,21 @@ input[type="file"] {
   font-weight: bold;
   margin: 20px 0;
 }
+
+/* Summary mode select */
+.pixel-select {
+  font-family: 'Press Start 2P', cursive;
+  background-color: var(--brown-dark);
+  color: var(--brass-primary);
+  border: 3px solid var(--brass-dark);
+  padding: 8px 12px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  outline: none;
+  margin-bottom: 15px;
+}
+
+.pixel-select:focus {
+  border-color: var(--brass-primary);
+}
