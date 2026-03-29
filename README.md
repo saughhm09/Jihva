@@ -56,7 +56,7 @@ Jihva/
 
 ### Prerequisites
 
-- Python 3.10+
+- Python 3.10 or 3.11 (3.12, 3.13 & 3.14 doesn't work)
 - Node.js 18+
 - **FFmpeg** installed and added to PATH (required for audio decoding)
   - Windows: [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
