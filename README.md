@@ -56,11 +56,11 @@ Jihva/
 
 ### Prerequisites
 
-- Python 3.10 or 3.11 (3.12, 3.13 & 3.14 doesn't work)
+- Python 3.10+
 - Node.js 18+
 - **FFmpeg** installed and added to PATH (required for audio decoding)
-  - Windows: [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
-  - Or via winget: `winget install ffmpeg`
+  - Windows: `winget install ffmpeg`
+  - Or download from [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
 
 ---
 
@@ -84,6 +84,18 @@ source venv/bin/activate
 
 Install dependencies:
 
+> If you have a GPU, install PyTorch with CUDA support first:
+> ```bash
+> pip install torch==2.11.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cu121
+> ```
+>
+> If you are on CPU only:
+> ```bash
+> pip install torch==2.11.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cpu
+> ```
+
+Then install the rest:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -94,7 +106,7 @@ Download the spaCy language model:
 python -m spacy download en_core_web_sm
 ```
 
-Pre-download the Whisper model (do this once to avoid delays on first request):
+Pre-download the Whisper model (do this once to avoid a long delay on the first request):
 
 ```bash
 python -c "from faster_whisper import WhisperModel; WhisperModel('medium', device='cpu', compute_type='int8')"
@@ -106,7 +118,7 @@ Configure your environment — edit `Backend/.env`:
 HF_TOKEN=hf_your_token_here
 ```
 
-> The HF_TOKEN is only needed for speaker diarization. The rest of the pipeline works without it.
+> The `HF_TOKEN` is only needed for speaker diarization. The rest of the pipeline works without it.
 
 Run the server:
 
@@ -120,9 +132,9 @@ The API will be available at `http://localhost:8000`.
 
 ### Speaker Diarization Setup (Optional)
 
-Diarization requires a HuggingFace account and manual access approval:
+Diarization requires a HuggingFace account and manual access approval for two gated models:
 
-1. Create a token at [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens) (read access)
+1. Create a token at [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens) (read access is enough)
 2. Accept terms at [https://huggingface.co/pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1)
 3. Accept terms at [https://huggingface.co/pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0)
 4. Paste your token into `Backend/.env`
@@ -139,7 +151,7 @@ npm install
 npm run dev
 ```
 
-The app runs at `http://localhost:5173` and proxies API calls to the backend automatically.
+The app runs at `http://localhost:5173` and proxies all `/api` calls to the backend automatically via Vite's proxy config.
 
 ---
 
@@ -156,7 +168,7 @@ Accepts `multipart/form-data`:
 | `remove_fillers` | bool | false | Strip filler words (um, uh, like...) |
 | `noise_reduction` | bool | true | Apply spectral noise reduction |
 | `silence_removal` | bool | false | Remove silent regions |
-| `summary_mode` | string | Detailed | Detailed / Short / Bullet |
+| `summary_mode` | string | Detailed | `Detailed` / `Short` / `Bullet` |
 
 Returns JSON:
 
@@ -180,7 +192,11 @@ Returns JSON:
   "keywords": { "hello": 4 },
   "accent": {
     "prediction": "Neutral Indian",
-    "confidences": { "North Indian": 30.0, "South Indian": 25.0, "Neutral Indian": 45.0 }
+    "confidences": {
+      "North Indian": 30.0,
+      "South Indian": 25.0,
+      "Neutral Indian": 45.0
+    }
   },
   "summary": {
     "overall": "...",
@@ -194,7 +210,8 @@ Returns JSON:
 
 ## Known Limitations
 
-- Accent detection is a mock classifier (random forest on dummy data). A real implementation requires a labeled Indian English accent dataset.
+- Accent detection is a mock classifier (random forest trained on dummy data). A real implementation requires a labeled Indian English accent dataset.
 - Whisper is forced to English (`language="en"`). Change this in `transcription.py` if you need multilingual support.
 - Diarization requires gated HuggingFace model access and will be skipped without a valid token.
-- The `PySoundFile` warning on Windows is harmless — librosa falls back to audioread automatically.
+- The `PySoundFile` warning on Windows is harmless — librosa falls back to audioread automatically. Install FFmpeg to resolve it properly.
+- The punctuation restoration model (`deepmultilingualpunctuation`) has a known incompatibility with newer versions of `transformers`. A patch is applied automatically at runtime.
