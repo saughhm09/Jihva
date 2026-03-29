@@ -1,18 +1,46 @@
-fastapi
-uvicorn
-torch
-transformers
-faster-whisper
-librosa
-soundfile
-pydub
-pyannote.audio
-spacy
-scikit-learn
-sounddevice
-matplotlib
-noisereduce
-speechbrain
-deepmultilingualpunctuation
-python-multipart
-python-dotenv
+# Web framework
+fastapi==0.135.2
+uvicorn==0.42.0
+starlette==1.0.0
+python-multipart==0.0.22
+python-dotenv==1.2.2
+
+# Audio processing
+librosa==0.11.0
+soundfile==0.13.1
+noisereduce==3.0.3
+pydub==0.25.1
+audioread==3.1.0
+soxr==1.0.0
+
+# Transcription
+faster-whisper==1.2.1
+ctranslate2==4.7.1
+
+# Speaker diarization
+pyannote-audio==4.0.4
+pyannote-core==6.0.1
+pyannote-database==6.1.1
+pyannote-pipeline==4.0.0
+
+# NLP / Transformers
+transformers==5.4.0
+tokenizers==0.22.2
+deepmultilingualpunctuation==1.0.1
+
+# Sentiment / Summarization
+torch==2.11.0
+torchaudio==2.11.0
+
+# Keyword extraction
+spacy==3.8.14
+
+# Accent detection
+scikit-learn==1.8.0
+
+# Utilities
+numpy==2.4.4
+huggingface_hub==1.8.0
+safetensors==0.7.0
+requests==2.33.0
+tqdm==4.67.3
